@@ -1,8 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4 font-weight-bold">Welcome</h1>
 </div>
+
+
+<hr/>
+
+<div class="d-flex justify-content-around">
+    <div class="d-flex flex-column ">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <a href="@Url.Action("Login", "User")">
+                    <button class="btn-lg btn-primary my-3 pe-auto w-100">Login</button>
+                </a>
+                <a href="@Url.Action("Login", "User")">
+                    <button class="btn-lg btn-primary my-3 pe-auto w-100">Database</button>
+                </a>
+                <a href="@Url.Action("Privacy", "Home")">
+                    <button class="btn-lg btn-primary my-3 pe-auto w-100">Privacy</button>
+                </a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+@*<a class=" mt-2 col pe-auto  p-10 btn btn-outline-primary" data-mdb-ripple-color="dark" asp-area="" >Order</a>*@

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using CarWebApp.Models;
 using CarWebApp.Services;
@@ -9,8 +10,10 @@ namespace CarWebApp.Controllers
     [Route("[controller]/[action]")]
     public class UserController : Controller
     {
-        private IUserService _service;
+        private readonly IUserService _service;
 
+        private const string AuthorizationCookieName = "Authorization";
+        
         public UserController(IUserService service)
         {
             _service = service;
@@ -25,11 +28,27 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
-            string key = await _service.GetJWT(model);
-
-            Response.Cookies.Append("Authorization", key);
+            string key;
+            try
+            {
+                key = await _service.GetJWT(model);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+            
+            Response.Cookies.Append(AuthorizationCookieName, key);
             
             return RedirectToAction("Index", "Home");
-        } 
+        }
+
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete(AuthorizationCookieName);
+
+            return View();
+        }
     }
 }
