@@ -23,7 +23,7 @@ namespace CarWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             string key = await _service.GetJWT(model);
 
