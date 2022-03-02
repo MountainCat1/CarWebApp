@@ -61,5 +61,21 @@ namespace CarWebApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var carModels = await _carModelService.GetAll();
+            var comboBoxList = carModels
+                .Select(x => new SelectListItem()
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                }).ToList();
+            
+            ViewBag.CarModelId = comboBoxList;
+            
+            return View();
+        }
     }
 }

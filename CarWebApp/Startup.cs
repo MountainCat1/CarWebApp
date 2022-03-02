@@ -71,7 +71,7 @@ namespace CarWebApp
             services.AddScoped<ICarModelService, CarModelService>();
             services.AddScoped<DbSeeder>();
 
-            services.AddMvc();
+            services.AddMvcCore();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,7 +80,7 @@ namespace CarWebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
                 app.UseSwagger();
                 app.UseSwaggerUI();
 
@@ -93,11 +93,7 @@ namespace CarWebApp
                 app.UseHsts();
             }
 
-           
-            
             app.UseMiddleware<AuthorizationHeaderMiddleware>();
-            
-            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -106,13 +102,13 @@ namespace CarWebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = "https://localhost:5001/swagger";
             });
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
