@@ -77,5 +77,18 @@ namespace CarWebApp.Controllers
             
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromForm] CarModel model)
+        {
+            // TODO 
+            throw new NotImplementedException();
+        }
+        
+        public IActionResult Delete()
+        {
+            // TODO 
+            throw new NotImplementedException();
+        }
     }
 }
