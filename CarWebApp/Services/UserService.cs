@@ -23,6 +23,7 @@ namespace CarWebApp.Services
     {
         public Task<string> GetJWT(LoginModel model);
         public Task RegisterUser(RegisterModel model, int roleId = 2);
+        public Task<User> GetUser(ClaimsPrincipal claimPrincipal);
     }
 
     public class UserService : IUserService
@@ -32,13 +33,25 @@ namespace CarWebApp.Services
         private readonly IPasswordHasher<User> _passwordHasher;
 
 
-        public UserService(DatabaseContext context, IMapper mapper, 
+        public UserService(DatabaseContext context, 
             AuthenticationSettings authenticationSettings, 
             IPasswordHasher<User> passwordHasher)
         {
             _context = context;
             _authenticationSettings = authenticationSettings;
             _passwordHasher = passwordHasher;
+        }
+        
+        public async Task<User> GetUser(ClaimsPrincipal claimPrincipal)
+        {
+            var claim = claimPrincipal.FindFirst(u => u.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                return null;
+
+            var userId = int.Parse(claim.Value);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return user;
         }
         
         public async Task<string> GetJWT(LoginModel model)

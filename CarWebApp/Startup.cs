@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CarWebApp.Configuration;
 using CarWebApp.Data;
 using CarWebApp.Entities;
+using CarWebApp.Middleware;
 using CarWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,6 +57,7 @@ namespace CarWebApp
             });
 
             services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddSwaggerGen();
             services.AddAutoMapper(typeof(Program).Assembly);
@@ -65,11 +67,11 @@ namespace CarWebApp
             );
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<DbSeeder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
-            IUserService userService, DatabaseContext databaseContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DbSeeder seeder)
         {
             if (env.IsDevelopment())
             {
@@ -78,7 +80,7 @@ namespace CarWebApp
                 app.UseSwagger();
                 app.UseSwaggerUI();
 
-                new DbSeeder(databaseContext, userService).Seed().Wait();
+                seeder.Seed().Wait();
             }
             else
             {
@@ -86,6 +88,10 @@ namespace CarWebApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseMiddleware<AuthorizationHeaderMiddleware>();
+            
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

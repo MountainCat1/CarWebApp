@@ -43,12 +43,19 @@ namespace CarWebApp.Controllers
             
             return RedirectToAction("Index", "Home");
         }
-
+        
+        [HttpGet]
+        public IActionResult LogoutConfirm()
+        {
+            return View();
+        }
+        
+        [HttpGet]
         public IActionResult Logout()
         {
             Response.Cookies.Delete(AuthorizationCookieName);
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
