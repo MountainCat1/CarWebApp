@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using CarWebApp.Entities;
 using CarWebApp.Models;
 using CarWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,13 @@ namespace CarWebApp.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> WhoAmI()
+        {
+            User user = await _service.GetUser(User);
+            return Ok(user != null ? user.Username : "Not found" );
         }
 
         [HttpPost]

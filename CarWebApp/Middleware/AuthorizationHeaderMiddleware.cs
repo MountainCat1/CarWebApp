@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace CarWebApp.Middleware
@@ -16,7 +17,8 @@ namespace CarWebApp.Middleware
         {
             string token = context.Request.Cookies["Authorization"];
 
-            context.Request.Headers.Add("Authorization", $"Bearer {token}");
+            if(!context.Request.Headers.ContainsKey("Authorization"))
+                context.Request.Headers.Add("Authorization", $"Bearer {token}");
 
             await next(context);
         }

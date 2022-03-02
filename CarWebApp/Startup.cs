@@ -67,7 +67,11 @@ namespace CarWebApp
             );
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarService, CarService>();
+            services.AddScoped<ICarModelService, CarModelService>();
             services.AddScoped<DbSeeder>();
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,23 +93,26 @@ namespace CarWebApp
                 app.UseHsts();
             }
 
+           
+            
             app.UseMiddleware<AuthorizationHeaderMiddleware>();
             
-            app.UseAuthentication();
+            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = "https://localhost:5001/swagger";
             });
-
-            app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
