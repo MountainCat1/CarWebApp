@@ -24,6 +24,8 @@ namespace CarWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +34,10 @@ namespace CarWebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                
+                
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {
@@ -45,6 +51,12 @@ namespace CarWebApp
 
             app.UseRouting();
 
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = "https://localhost:5001/swagger";
+            });
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
