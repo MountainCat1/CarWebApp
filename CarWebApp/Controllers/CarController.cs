@@ -8,8 +8,11 @@ using CarWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+
 namespace CarWebApp.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class CarController : Controller
     {
         private readonly ICarService _carService;
@@ -23,6 +26,7 @@ namespace CarWebApp.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return RedirectToAction("List");
@@ -41,14 +45,7 @@ namespace CarWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var carModels = await _carModelService.GetAll();
-            var comboBoxList = carModels
-                .Select(x => new SelectListItem()
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                }).ToList();
-            
+            var comboBoxList = await _carModelService.GetCarModelSelectList();
             ViewBag.CarModelId = comboBoxList;
 
             return View();
@@ -63,32 +60,36 @@ namespace CarWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit()
+        public async Task<IActionResult> Edit([FromQuery]int id)
         {
-            var carModels = await _carModelService.GetAll();
-            var comboBoxList = carModels
-                .Select(x => new SelectListItem()
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                }).ToList();
-            
+            var comboBoxList = await _carModelService.GetCarModelSelectList();
             ViewBag.CarModelId = comboBoxList;
+
+            var entity = await _carService.Get(id);
             
-            return View();
+            return View(entity);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm] CarModel model)
+        public async Task<IActionResult> Edit([FromForm] Car model)
         {
-            // TODO 
-            throw new NotImplementedException();
+            await _carService.Edit(model);
+            
+            return RedirectToAction("Index");
         }
         
-        public IActionResult Delete()
+        [HttpGet]
+        public async Task<IActionResult> DeleteConfirm([FromQuery] int id)
         {
-            // TODO 
-            throw new NotImplementedException();
+            return View( await _carService.Get(id));
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromForm]Car model)
+        {
+            await _carService.Remove(model.Id);
+            
+            return RedirectToAction("Index");
         }
     }
 }

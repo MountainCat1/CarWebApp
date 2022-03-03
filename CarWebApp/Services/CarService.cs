@@ -9,9 +9,11 @@ namespace CarWebApp.Services
     public interface ICarService
     {
         Task<List<Car>> GetAll();
+        Task<Car> Get(int id);
         Task Add(Car car);
         Task Edit(Car car);
-        Task Edit(int carId);
+        Task Remove(int carId);
+
     }
 
     public class CarService : ICarService
@@ -32,6 +34,17 @@ namespace CarWebApp.Services
             return await cars.ToListAsync();
         }
 
+        
+        public async Task<Car> Get(int id)
+        {
+            var entity = await _context.Cars
+                .Include(x => x.CarModel)
+                .ThenInclude(x => x.CarBrand)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return entity;
+        }
+        
         public async Task Add(Car car)
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -54,7 +67,7 @@ namespace CarWebApp.Services
             }
         }
         
-        public async Task Edit(int carId)
+        public async Task Remove(int carId)
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync())
             {
