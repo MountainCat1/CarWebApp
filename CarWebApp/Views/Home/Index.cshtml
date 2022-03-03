@@ -1,5 +1,8 @@
-﻿@{
+﻿@using CarWebApp.Entities
+@{
     ViewData["Title"] = "Home Page";
+    
+    var userRole = Context.Items["UserRole"] as UserRole?;
 }
 <div class="text-center">
     <h1 class="display-4 font-weight-bold">Welcome</h1>
@@ -14,9 +17,19 @@
                 <a href="@Url.Action("Index", "Car")">
                     <button class="btn-lg btn-primary my-3 pe-auto w-100">Database</button>
                 </a>
-                <a href="@Url.Action("Login", "User")">
-                    <button class="btn-lg btn-primary my-3 pe-auto w-100">Login</button>
-                </a>
+                @if (userRole is UserRole.Guest)
+                {
+                    <a href="@Url.Action("Login", "User")">
+                        <button class="btn-lg btn-primary my-3 pe-auto w-100">Login</button>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Logout", "User")">
+                        <button class="btn-lg btn-primary my-3 pe-auto w-100">Logout</button>
+                    </a>
+                }
+                
                 <a href="@Url.Action("Privacy", "Home")">
                     <button class="btn-lg btn-primary my-3 pe-auto w-100">Privacy</button>
                 </a>

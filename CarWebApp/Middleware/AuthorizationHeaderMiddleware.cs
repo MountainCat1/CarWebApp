@@ -1,16 +1,17 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using CarWebApp.Entities;
+using CarWebApp.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace CarWebApp.Middleware
 {
     public class AuthorizationHeaderMiddleware
     {
-        RequestDelegate next;
-
+        private readonly RequestDelegate _next;
         public AuthorizationHeaderMiddleware(RequestDelegate next)
         {
-            this.next = next;
+            _next = next;
         }
 
         public async Task Invoke(HttpContext context)
@@ -19,8 +20,8 @@ namespace CarWebApp.Middleware
 
             if(!context.Request.Headers.ContainsKey("Authorization"))
                 context.Request.Headers.Add("Authorization", $"Bearer {token}");
-
-            await next(context);
+            
+            await _next(context);
         }
     }
 }

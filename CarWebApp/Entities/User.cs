@@ -5,6 +5,13 @@
         public int Id { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-        public int RoleId { get; set; }
+        public UserRole Role { get; set; }
+    }
+
+    public enum UserRole
+    {
+        Guest = 0,
+        Admin = 1,
+        User = 2
     }
 }

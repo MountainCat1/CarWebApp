@@ -143,7 +143,7 @@ namespace CarWebApp.Data
             {
                 Username = "admin",
                 Password = "admin"
-            }, roleId: 1);
+            }, role: UserRole.Admin);
         }
     }
 }

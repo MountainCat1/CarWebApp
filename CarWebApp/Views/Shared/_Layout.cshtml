@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using CarWebApp.Entities
+@{
+    var username = Context.Items["Username"] as string;
+    var userRole = Context.Items["UserRole"] as UserRole?;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -28,6 +34,14 @@
             </div>
         </div>
     </nav>
+    <div class="w-75 row justify-content-end">
+        <div class=".col-md-2">
+            @if (userRole is not UserRole.Guest)
+            {
+                <h4 class="p-1">Logged in as: <b>@username</b></h4>
+            }
+        </div>
+    </div>
 </header>
 <div class="container">
     <main role="main" class="pb-3">

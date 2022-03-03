@@ -92,17 +92,20 @@ namespace CarWebApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            app.UseMiddleware<AuthorizationHeaderMiddleware>();
+            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseMiddleware<AuthorizationHeaderMiddleware>();
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<AssignUserInfoMiddleware>();
+            
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");

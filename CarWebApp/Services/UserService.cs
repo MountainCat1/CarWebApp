@@ -22,7 +22,7 @@ namespace CarWebApp.Services
     public interface IUserService
     {
         public Task<string> GetJWT(LoginModel model);
-        public Task RegisterUser(RegisterModel model, int roleId = 2);
+        public Task RegisterUser(RegisterModel model, UserRole role = UserRole.User);
         public Task<User> GetUser(ClaimsPrincipal claimPrincipal);
     }
 
@@ -73,7 +73,7 @@ namespace CarWebApp.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                new Claim(ClaimTypes.Role, ((int)user.Role).ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
@@ -89,12 +89,12 @@ namespace CarWebApp.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task RegisterUser(RegisterModel model, int roleId = 2)
+        public async Task RegisterUser(RegisterModel model, UserRole role = UserRole.User)
         {
             User newUser = new User()
             {
                 Username = model.Username,
-                RoleId = roleId
+                Role = role
             };
 
             var hashedPassword = _passwordHasher.HashPassword(newUser, model.Password);

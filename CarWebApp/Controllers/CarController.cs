@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarWebApp.Entities;
+using CarWebApp.Exceptions;
 using CarWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,9 +36,6 @@ namespace CarWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            User user = await _userService.GetUser(User);
-            ViewBag.Authorized = user is {RoleId: 1};
-            
             var model = await _carService.GetAll();
             return View(model);
         }
@@ -54,6 +52,11 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Car model)
         {
+            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            {
+                throw new ForbidException("This action requires admin role");
+            }
+            
             await _carService.Add(model);
 
             return RedirectToAction("Index");
@@ -73,6 +76,11 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromForm] Car model)
         {
+            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            {
+                throw new ForbidException("This action requires admin role");
+            }
+            
             await _carService.Edit(model);
             
             return RedirectToAction("Index");
@@ -87,6 +95,11 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromForm]Car model)
         {
+            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            {
+                throw new ForbidException("This action requires admin role");
+            }
+            
             await _carService.Remove(model.Id);
             
             return RedirectToAction("Index");
