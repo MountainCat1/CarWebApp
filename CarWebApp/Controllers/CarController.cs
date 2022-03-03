@@ -5,9 +5,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CarWebApp.Entities;
 using CarWebApp.Exceptions;
+using CarWebApp.Models;
 using CarWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Rotativa.AspNetCore;
 
 
 namespace CarWebApp.Controllers
@@ -34,12 +36,36 @@ namespace CarWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List([FromQuery]int? carBrandFilerId)
+        {
+            var cars = await _carService.GetAll();
+
+            if (carBrandFilerId != null)
+            {
+                cars = cars.Where(x => x.CarModel.CarBrand.Id == carBrandFilerId).ToList();
+            }
+            
+            ViewBag.CarBrands = (await _carModelService.GetAll())
+                .Select(x => x.CarBrand)
+                .Distinct()
+                .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
+                .ToList();
+            
+            return View(new CarListModel()
+            {
+                Cars = cars
+            });
+        }
+        
+        
+        [HttpGet]
+        public async Task<IActionResult> Print()
         {
             var model = await _carService.GetAll();
-            return View(model);
+            var pdf = new ViewAsPdf("PrintList", model);
+            return pdf;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -52,7 +78,7 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Car model)
         {
-            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
             {
                 throw new ForbidException("This action requires admin role");
             }
@@ -76,7 +102,7 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromForm] Car model)
         {
-            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
             {
                 throw new ForbidException("This action requires admin role");
             }
@@ -95,7 +121,7 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromForm]Car model)
         {
-            if (await _userService.GetUser(this.User) is {Role: UserRole.Admin})
+            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
             {
                 throw new ForbidException("This action requires admin role");
             }
@@ -104,5 +130,6 @@ namespace CarWebApp.Controllers
             
             return RedirectToAction("Index");
         }
+
     }
 }

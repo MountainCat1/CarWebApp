@@ -7,7 +7,7 @@ namespace CarWebApp.Entities
     {
         public int Id { get; set; }
 
-        [DisplayName("RegistrationNumber")]
+        [DisplayName("Registration Number")]
         [StringLength(maximumLength: 7, MinimumLength = 7, ErrorMessage = "Registration number must have 7 characters.")]
         public string RegistrationNumber { get; set; }
         
@@ -16,6 +16,7 @@ namespace CarWebApp.Entities
         public string VIN { get; set; }
 
         public virtual CarModel CarModel { get; set; }
+        [DisplayName("Car Model")]
         public int CarModelId { get; set; }
     }
 }
