@@ -53,15 +53,21 @@ namespace CarWebApp.Controllers
             
             return View(new CarListModel()
             {
-                Cars = cars
+                Cars = cars,
+                CarBrandFilerId = carBrandFilerId
             });
         }
         
-        
         [HttpGet]
-        public async Task<IActionResult> Print()
+        public async Task<IActionResult> Print([FromQuery]int? carBrandFilerId)
         {
             var model = await _carService.GetAll();
+
+            if (carBrandFilerId != null)
+            {
+                model = model.Where(x => x.CarModel.CarBrand.Id == carBrandFilerId).ToList();
+            }
+            
             var pdf = new ViewAsPdf("PrintList", model);
             return pdf;
         }
@@ -130,6 +136,5 @@ namespace CarWebApp.Controllers
             
             return RedirectToAction("Index");
         }
-
     }
 }
