@@ -7,6 +7,7 @@ using CarWebApp.Entities;
 using CarWebApp.Exceptions;
 using CarWebApp.Models;
 using CarWebApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -84,11 +85,6 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Car model)
         {
-            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
-            {
-                throw new ForbidException("This action requires admin role");
-            }
-            
             await _carService.Add(model);
 
             return RedirectToAction("Index");
@@ -108,11 +104,6 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromForm] Car model)
         {
-            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
-            {
-                throw new ForbidException("This action requires admin role");
-            }
-            
             await _carService.Edit(model);
             
             return RedirectToAction("Index");
@@ -127,11 +118,6 @@ namespace CarWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromForm]Car model)
         {
-            if (await _userService.GetUser(this.User) is not {Role: UserRole.Admin})
-            {
-                throw new ForbidException("This action requires admin role");
-            }
-            
             await _carService.Remove(model.Id);
             
             return RedirectToAction("Index");

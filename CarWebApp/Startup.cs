@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CarWebApp.Configuration;
 using CarWebApp.Data;
 using CarWebApp.Entities;
+using CarWebApp.Filters;
 using CarWebApp.Middleware;
 using CarWebApp.Services;
 using Microsoft.AspNetCore.Builder;
@@ -58,7 +59,17 @@ namespace CarWebApp
                 };
             });
 
-            services.AddControllersWithViews();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarService, CarService>();
+            services.AddScoped<ICarModelService, CarModelService>();
+            services.AddScoped<DbSeeder>();
+            services.AddScoped<AuthenticationFilter, AuthenticationFilter>();
+
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<AuthenticationFilter>();
+            });
             services.AddRazorPages();
 
             services.AddSwaggerGen();
@@ -67,11 +78,7 @@ namespace CarWebApp
             services.AddDbContext<DatabaseContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString"))
             );
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICarService, CarService>();
-            services.AddScoped<ICarModelService, CarModelService>();
-            services.AddScoped<DbSeeder>();
+
 
             services.AddMvcCore();
         }
@@ -105,7 +112,7 @@ namespace CarWebApp
             
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseMiddleware<AssignUserInfoMiddleware>();
             
             app.UseSwaggerUI(options =>

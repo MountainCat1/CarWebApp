@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using CarWebApp.Entities;
 using CarWebApp.Models;
 using CarWebApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebApp.Controllers
 {
+    [AllowAnonymous]
     [ApiController]
     [Route("[controller]/[action]")]
     public class UserController : Controller
